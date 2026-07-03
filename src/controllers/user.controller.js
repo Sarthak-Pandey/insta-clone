@@ -1,10 +1,11 @@
 const followModel = require("../models/follow.model");
-
+const userModel = require("../models/user.model");
 
 async function followUserController(req,res){
 
     const followerUsername = req.user.user;
     const followUsername = req.params.username;
+
 
     if(followerUsername===followUsername){
         return res.status(400).json({
@@ -12,6 +13,15 @@ async function followUserController(req,res){
         })
     }
 
+    const isFollowExists = await userModel.findOne({
+        username:followUsername
+    })
+
+    if(!isFollowExists){
+        return res.status(404).json({
+            message:"User are trying to follow does not exists"
+        })
+    }
 
     const isAlreadyFollowing = await followModel.findOne({
         follower:followerUsername,
@@ -20,7 +30,7 @@ async function followUserController(req,res){
 
     if(isAlreadyFollowing){
         return res.status(200).json({
-            message:`You are already ${followUsername}`,
+            message:`You are already follow ${followUsername}`,
             follow:isAlreadyFollowing
         })
     }
