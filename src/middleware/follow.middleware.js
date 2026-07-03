@@ -5,8 +5,8 @@ async function findFollowRequest(req,res,next){
     const followerUsername = req.params.username;
 
     const followRequest = await followModel.findOne({
-        follower: followerUsername,
-        follow: loggedInUser
+        follower: loggedInUser,
+        follow: followerUsername
     });
 
     if (!followRequest) {

@@ -38,6 +38,11 @@ async function followUserController(req,res){
                 message:"Already following this user"
             })
         }
+        if(isAlreadyFollowing.status==='rejected'){
+            return res.status(409).json({
+                message:"Follow Request Sent again"
+            })
+        }
     }
 
     const follow = await followModel.create({
@@ -76,7 +81,7 @@ async function acceptFollowRequestController(req,res){
         })
     }
 
-    req.followRequest.status = "accpted";
+    req.followRequest.status = "accepted";
 
     await req.followRequest.save();
 

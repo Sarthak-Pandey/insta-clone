@@ -8,7 +8,7 @@ userRouter.post('/follow/:username',identifyUser,userController.followUserContro
 
 userRouter.get('/follow-requests',identifyUser,userController.getPendingRequestsController);
 
-userRouter.patch("/follow/:username/accept",identifyUser,findFollowRequest,userController.acceptFollowRequestController);
+userRouter.patch("/follow/:username/accepted",identifyUser,findFollowRequest,userController.acceptFollowRequestController);
 
 userRouter.patch("/follow/:username/reject",identifyUser,findFollowRequest,userController.rejectFollowRequestController);
 
