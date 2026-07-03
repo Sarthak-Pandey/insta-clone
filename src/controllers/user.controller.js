@@ -6,7 +6,6 @@ async function followUserController(req,res){
     const followerUsername = req.user.user;
     const followUsername = req.params.username;
 
-
     if(followerUsername===followUsername){
         return res.status(400).json({
             message:"You does not follow yourself"
@@ -29,22 +28,79 @@ async function followUserController(req,res){
     });
 
     if(isAlreadyFollowing){
-        return res.status(200).json({
-            message:`You are already follow ${followUsername}`,
-            follow:isAlreadyFollowing
+        if(isAlreadyFollowing.status==='pending'){
+            return res.status(409).json({
+                message:"Follow request Already sent"
+            })
+        }
+        if(isAlreadyFollowing.status==='accepted'){
+            return res.status(409).json({
+                message:"Already following this user"
+            })
+        }
+    }
+
+    const follow = await followModel.create({
+        follower:followerUsername,
+        follow:followUsername,
+        status:isFollowExists.isPrivate?"pending":"accepted"
+    })
+
+    return res.status(201).json({
+        message:isFollowExists.isPrivate?"Follow request sent":"User followed Successfully",
+        follow
+    })
+
+}
+
+async function getPendingRequestsController(req,res){
+    const username = req.user.user;
+
+    const pendingRequests = await followModel.find({
+        follow:username,
+        status:"pending"
+    })
+
+    return res.status(200).json({
+        message:"Pending follow requests fetched Successfully",
+        pendingRequests
+    })
+
+}
+
+async function acceptFollowRequestController(req,res){
+
+    if(req.followRequest.status==="accepted"){
+        return res.status(409).json({
+            message:"Request already accpted"
         })
     }
 
-    const followRecord = await followModel.create({
-        follower:followerUsername,
-        follow:followUsername
-    })
+    req.followRequest.status = "accpted";
 
-    res.status(201).json({
-        message:`You are following ${followUsername}`,
-        follow:followRecord
-    })
+    await req.followRequest.save();
 
+    return res.status(200).json({
+        message:"Follow request accepted Successfully",
+        followRequest: req.followRequest
+    })
+}
+
+async function rejectFollowRequestController(req,res){
+    if(req.followRequest.status==="rejected"){
+        return res.status(409).json({
+            message:"Request already rejected"
+        })
+    }
+
+    req.followRequest.status = "rejected";
+
+    await req.followRequest.save();
+
+    return res.status(200).json({
+        message:"Follow request rejected successfully",
+        followRequest: req.followRequest
+    })
 }
 
 
@@ -72,5 +128,8 @@ async function unfollowUserController(req,res){
 
 module.exports = {
     followUserController,
+    getPendingRequestsController,
+    acceptFollowRequestController,
+    rejectFollowRequestController,
     unfollowUserController
 }

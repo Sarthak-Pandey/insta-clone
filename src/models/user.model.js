@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     profileImage:{  
         type:String,
         default:"https://ik.imagekit.io/dbvcqzety/default-image.jpg?updatedAt=1782750983047"
+    },
+    isPrivate:{
+        type:Boolean,
+        default:false
     }
 })
 

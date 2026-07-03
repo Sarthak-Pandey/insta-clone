@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 
 const followSchema = new mongoose.Schema({
@@ -6,6 +7,11 @@ const followSchema = new mongoose.Schema({
     },
     follow:{
         type:String
+    },
+    status:{
+        type:String,
+        enum:["pending","accepted","rejected"],
+        default:"pending"
     }
 },{
     timestamps: true

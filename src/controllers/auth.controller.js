@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 
 
-async function registerController (req,res){
+async function registerController (req,res){        
     const {email,username,password,bio,profileImage} = req.body;
 
    const isUserAlreadyExists = await userModel.findOne({
@@ -38,8 +38,9 @@ async function registerController (req,res){
     )
  
 
+
     res.cookie("token",token);
-    console.log(user.profileImage);
+
     res.status(201).json({
         message:"User registered successfully",
         user:{
